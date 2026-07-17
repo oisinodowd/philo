@@ -1,0 +1,2 @@
+Philo public assets directory.
+Place favicon, OG images, and other static assets here.
