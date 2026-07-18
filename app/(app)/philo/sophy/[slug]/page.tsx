@@ -1,12 +1,38 @@
 import Link from "next/link";
-import { ArrowLeft, BookOpen, MessageCircle, User, Calendar, Globe, BookMarked } from "lucide-react";
+import { ArrowLeft, BookOpen, MessageCircle, Calendar, Globe, BookMarked } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getPhilosopherBySlug, getFirstPassageOfWork } from "@/lib/data";
+import { KnowledgeGraphMini } from "@/components/study/mini-graph";
+import { RelatedPhilosopherRow } from "@/components/study/related-philosophers";
 
-export const metadata = {
-  title: "Saint Thomas Aquinas — Philo",
-};
+interface Props {
+  params: Promise<{ slug: string }>;
+}
 
-export default function PhilosopherProfilePage() {
+export async function generateMetadata({ params }: Props) {
+  const { slug } = await params;
+  const phil = await getPhilosopherBySlug(slug);
+  return {
+    title: `${phil.name} — Philo`,
+    description: phil.bioShort ?? `Read the works of ${phil.name} in the Philo corpus.`,
+  };
+}
+
+export default async function PhilosopherProfilePage({ params }: Props) {
+  const { slug } = await params;
+  const phil = await getPhilosopherBySlug(slug);
+
+  // Build read links for each work (first passage)
+  const workLinks: Record<string, string> = {};
+  for (const work of phil.works) {
+    if (work.chapterCount > 0) {
+      const first = await getFirstPassageOfWork(work.id);
+      if (first) {
+        workLinks[work.id] = `/philo/sophy/${slug}/read/${work.id}/${first.chapterId}/${first.id}`;
+      }
+    }
+  }
+
   return (
     <div className="container py-6 md:py-10 max-w-4xl animate-fade-in">
       {/* Back */}
@@ -21,45 +47,54 @@ export default function PhilosopherProfilePage() {
         <div className="flex flex-col md:flex-row gap-6 items-start">
           <div className="h-24 w-24 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
             <span className="font-serif text-4xl font-bold text-primary">
-              T
+              {phil.name[0]}
             </span>
           </div>
           <div className="flex-1">
             <h1 className="font-serif text-2xl md:text-3xl font-bold">
-              Saint Thomas Aquinas
+              {phil.name}
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Doctor Angelicus &middot; Doctor Communis
-            </p>
+            {phil.nameNative && (
+              <p className="text-sm text-muted-foreground italic mt-0.5">
+                {phil.nameNative}
+              </p>
+            )}
             <p className="text-sm mt-3 leading-relaxed">
-              Dominican friar, philosopher, and theologian whose synthesis of
-              Aristotelian philosophy with Christian doctrine defined
-              scholasticism. His best-known works are the{" "}
-              <em>Summa Theologica</em> and the <em>Summa contra Gentiles</em>.
+              {phil.bioFull ?? phil.bioShort}
             </p>
             <div className="flex flex-wrap items-center gap-3 mt-4 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <Calendar className="h-3.5 w-3.5" />
-                1225&ndash;1274
-              </span>
-              <span className="flex items-center gap-1">
-                <Globe className="h-3.5 w-3.5" />
-                Scholastic
-              </span>
-              <span className="flex items-center gap-1">
-                <BookOpen className="h-3.5 w-3.5" />
-                Theology
-              </span>
+              {(phil.birthYear || phil.deathYear) && (
+                <span className="flex items-center gap-1">
+                  <Calendar className="h-3.5 w-3.5" />
+                  {phil.birthYear
+                    ? `${phil.birthYear}–${phil.deathYear ?? "present"}`
+                    : `d. ${phil.deathYear}`}
+                </span>
+              )}
+              {phil.tradition && (
+                <span className="flex items-center gap-1">
+                  <Globe className="h-3.5 w-3.5" />
+                  {phil.tradition}
+                </span>
+              )}
+              {phil.category && (
+                <span className="flex items-center gap-1">
+                  <BookOpen className="h-3.5 w-3.5" />
+                  {phil.category}
+                </span>
+              )}
             </div>
             <div className="mt-5 flex flex-wrap gap-3">
-              <Button asChild>
-                <Link href={`/philo/sophy/thomas-aquinas/read`}>
-                  <BookOpen className="mr-2 h-4 w-4" />
-                  Read Works
-                </Link>
-              </Button>
+              {phil.works.length > 0 && (
+                <Button asChild>
+                  <Link href="#works">
+                    <BookOpen className="mr-2 h-4 w-4" />
+                    Read Works ({phil.works.length})
+                  </Link>
+                </Button>
+              )}
               <Button variant="outline" asChild>
-                <Link href={`/philo/sophy/thomas-aquinas/tutor`}>
+                <Link href={`/philo/sophy/${slug}/tutor`}>
                   <MessageCircle className="mr-2 h-4 w-4" />
                   Talk to His AI
                 </Link>
@@ -70,63 +105,65 @@ export default function PhilosopherProfilePage() {
       </div>
 
       {/* Works section */}
-      <section className="mb-8">
-        <h2 className="font-serif text-xl font-semibold mb-4">Key Works</h2>
-        <div className="space-y-3">
-          {[
-            {
-              title: "Summa Theologica",
-              year: 1274,
-              chapters: 8,
-              desc: "The masterwork of scholastic philosophy and one of the most influential works of Western literature.",
-            },
-            {
-              title: "Summa contra Gentiles",
-              year: 1264,
-              chapters: 0,
-              desc: "A reasoned defense of Christian doctrine addressed to non-believers, structured around truths accessible to reason and those known by revelation.",
-            },
-            {
-              title: "On Being and Essence",
-              year: 1256,
-              chapters: 0,
-              desc: "A foundational treatise on metaphysics, distinguishing essence from existence and laying the groundwork for Thomistic ontology.",
-            },
-          ].map((work) => (
-            <Link
-              key={work.title}
-              href={`/philo/sophy/thomas-aquinas/read/placeholder/1/1`}
-              className="scholar-card block hover:border-primary/30 transition-all duration-200"
-            >
-              <div className="flex items-start gap-3">
-                <BookMarked className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <h3 className="font-serif font-semibold">{work.title}</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    c. {work.year} &middot; {work.chapters} chapter
-                    {work.chapters !== 1 ? "s" : ""}
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                    {work.desc}
-                  </p>
+      {phil.works.length > 0 && (
+        <section id="works" className="mb-8">
+          <h2 className="font-serif text-xl font-semibold mb-4">
+            Key Works ({phil.works.length})
+          </h2>
+          <div className="space-y-3">
+            {phil.works.map((work) => (
+              <Link
+                key={work.id}
+                href={workLinks[work.id] ?? `#`}
+                className={`scholar-card block transition-all duration-200 ${
+                  workLinks[work.id] ? "hover:border-primary/30" : "opacity-60 cursor-default"
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <BookMarked className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-baseline gap-2 flex-wrap">
+                      <h3 className="font-serif font-semibold">{work.title}</h3>
+                      {work.titleOriginal && (
+                        <span className="text-xs text-muted-foreground italic">
+                          {work.titleOriginal}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {work.yearWritten && <>c. {work.yearWritten} &middot; </>}
+                      {work.chapterCount} chapter{work.chapterCount !== 1 ? "s" : ""}
+                      {work.language && <> &middot; {work.language.toUpperCase()}</>}
+                    </p>
+                    {work.chapterCount === 0 && (
+                      <p className="text-xs text-muted-foreground mt-1 italic">
+                        Coming soon — passages not yet ingested
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
-      {/* Knowledge Graph Preview */}
+      {/* Related philosophers */}
+      {phil.related.length > 0 && (
+        <section className="mb-8">
+          <h2 className="font-serif text-xl font-semibold mb-4">
+            Related Philosophers
+          </h2>
+          <RelatedPhilosopherRow related={phil.related} />
+        </section>
+      )}
+
+      {/* Knowledge Graph Mini */}
       <section>
         <h2 className="font-serif text-xl font-semibold mb-4">
-          Knowledge Graph
+          Your Knowledge Graph
         </h2>
-        <div className="scholar-card h-48 flex items-center justify-center border-dashed">
-          <p className="text-sm text-muted-foreground">
-            Knowledge graph visualization will appear here as you read and
-            annotate works.
-          </p>
-        </div>
+        <KnowledgeGraphMini philosopherId={phil.id} philosopherSlug={slug} />
       </section>
     </div>
   );
