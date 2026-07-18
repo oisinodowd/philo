@@ -1,0 +1,50 @@
+{
+  "philosopher_slug": "thomas-aquinas",
+  "works": [
+    {
+      "title": "Summa Theologica",
+      "title_original": "Summa Theologiae",
+      "year_written": 1274,
+      "language": "la",
+      "source_url": "https://www.gutenberg.org/ebooks/17611",
+      "chapters": [
+        {
+          "chapter_number": 1,
+          "title": "Treatise on Sacred Doctrine (Prima Pars, Q1)",
+          "passages": [
+            {
+              "passage_offset": 1,
+              "content": "Whether, besides philosophy, any further doctrine is required? Objection 1. It seems that, besides philosophical science, we have no need of any further knowledge. For man should not seek to know what is above reason: 'Seek not the things that are too high for thee.' But whatever is not above reason is fully treated of in philosophical science. Therefore any other knowledge besides philosophical science is superfluous."
+            },
+            {
+              "passage_offset": 2,
+              "content": "Objection 2. Further, knowledge can be concerned only with being, for nothing can be known, save what is true; and all that is, is true. But everything that is, is treated of in philosophical science — even God Himself; so that there is a part of philosophy called theology, or the divine science. Therefore, besides philosophical science, there is no need of any further knowledge."
+            },
+            {
+              "passage_offset": 3,
+              "content": "On the contrary, It is written (2 Timothy 3:16): 'All Scripture, inspired of God, is profitable to teach, to reprove, to correct, to instruct in justice.' Now Scripture, inspired of God, is no part of philosophical science. Therefore it is useful that besides philosophical science, there should be other knowledge, i.e. inspired of God."
+            }
+          ]
+        },
+        {
+          "chapter_number": 2,
+          "title": "The Existence of God (Prima Pars, Q2, Article 3)",
+          "passages": [
+            {
+              "passage_offset": 1,
+              "content": "Whether God exists? The existence of God can be proved in five ways. The first and more manifest way is the argument from motion. It is certain, and evident to our senses, that in the world some things are in motion. Now whatever is in motion is put in motion by another, for nothing can be in motion except it is in potentiality to that towards which it is in motion; whereas a thing moves inasmuch as it is in act."
+            },
+            {
+              "passage_offset": 2,
+              "content": "The second way is from the nature of the efficient cause. In the world of sense we find there is an order of efficient causes. There is no case known in which a thing is found to be the efficient cause of itself; for so it would be prior to itself, which is impossible. Now in efficient causes it is not possible to go on to infinity. Therefore it is necessary to admit a first efficient cause, to which everyone gives the name of God."
+            },
+            {
+              "passage_offset": 3,
+              "content": "The third way is taken from possibility and necessity, and runs thus. We find in nature things that are possible to be and not to be, since they are found to be generated, and to corrupt, and consequently, they are possible to be and not to be. But it is impossible for these always to exist, for that which is possible not to be at some time is not. Therefore, if everything is possible not to be, then at one time there could have been nothing in existence. Therefore we cannot but postulate the existence of some being having of itself its own necessity, and not receiving it from another. This all men speak of as God."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

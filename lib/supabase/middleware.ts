@@ -50,11 +50,11 @@ export async function updateSession(request: NextRequest) {
 
   if (!user && isAppRoute) {
     const url = request.nextUrl.clone();
-    url.pathname = "/landing";
+    url.pathname = "/auth/login";
     return NextResponse.redirect(url);
   }
 
-  if (user && pathname === "/landing") {
+  if (user && (pathname === "/landing" || pathname.startsWith("/auth"))) {
     const url = request.nextUrl.clone();
     url.pathname = "/philo";
     return NextResponse.redirect(url);

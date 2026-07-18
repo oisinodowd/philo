@@ -3,7 +3,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { embedText } from "@/lib/rag";
 import { z } from "zod";
 import { createHash } from "node:crypto";
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const manifest = IngestManifestSchema.parse(body);
 
-    const supabase = await createServiceClient();
+    const supabase = createAdminClient();
 
     const { data: philosopher } = await supabase
       .from("philosophers")
